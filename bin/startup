@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+/**
+ * @author Robin Duda
+ *
+ * Entry point/Startup/Bootfile.
+ */
+
+require('./backend/persistence');
