@@ -13,10 +13,11 @@ var account = require('./account');
 var messaging = require('./messaging');
 var rooms = require('./rooms');
 var params = require('./../params');
-var Protocol = require('../protocol');
 
 var WebSocketServer = require('ws').Server,
     wss = new WebSocketServer({port: params.persistence.listenPort});
+
+console.log("Persistence running on port " + params.persistence.listenPort);
 
 var handler = {};
 
@@ -29,7 +30,6 @@ wss.on('connection', function connection(socket) {
     socket.on('message', function incoming(message) {
         message = JSON.parse(message);
         console.log(message);
-        console.log(message.header);
 
         if (handler[message.header.action] != null)
             handler[message.header.action](socket, message);

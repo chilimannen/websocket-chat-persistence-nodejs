@@ -18,16 +18,6 @@ module.exports = {
         this.command = command;
     },
 
-    Join: function (room, topic, version) {
-        this.header = {
-            action: 'join'
-        };
-
-        this.room = room;
-        this.topic = topic;
-        this.version = version;
-    },
-
     Room: function (room, topic, username, actor) {
         this.header = {
             action: 'room',
@@ -86,21 +76,5 @@ module.exports = {
         };
 
         this.list = undefined;
-    },
-
-    UserEvent: function (room, username, join) {
-        this.header = {
-            action: 'user.event'
-        };
-
-        this.room = room;
-        this.username = username;
-        this.join = join;
-    },
-
-    Help: function () {
-        this.header = {
-            action: 'help'
-        }
     }
 };
