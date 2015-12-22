@@ -40,7 +40,7 @@ module.exports = {
 };
 
 function expirationSecond() {
-    return new Date().getTime() + duration;
+    return new Date().getTime() * 1000 + duration;
 }
 
 function calculate(username, expiry) {

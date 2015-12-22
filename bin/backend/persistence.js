@@ -45,8 +45,10 @@ wss.on('connection', function connection(socket) {
 handler["authenticate"] = function (socket, message) {
     account.authenticate(message.username, message.password,
         function (result) {
+            var token = hmac.generate(result.username);
             result.header = message.header;
-            result.token = hmac.generate(result.username);
+            result.token = token.key;
+            result.expiry = token.expiry;
             socket.send(JSON.stringify(result));
         });
 };
