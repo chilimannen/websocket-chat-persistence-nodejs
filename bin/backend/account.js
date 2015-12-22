@@ -5,13 +5,12 @@
  */
 
 var mongoose = require('./database').database();
-var hash = require('./hash');
+var scrypt = require('./scrypt.js');
 
 var accountSchema = new mongoose.Schema({
         username: String,
-        password: String,
-        salt: String
-    }, {strict: false}
+        password: String
+    }, {strict: true}
 );
 
 var Account = mongoose.model('account', accountSchema);
@@ -29,18 +28,20 @@ module.exports = {
         password = password.toString();
 
         Account.where({username: username}).findOne(function (err, result) {
+
                 if (result) {
-                    hash.calculate(function (err, salt, hash) {
-                        callback({authenticated: (result.password === hash), username: username});
-                    }, password, result.salt);
+                    scrypt.verify(result.password, password, function (err, result) {
+                        callback({authenticated: result, username: username});
+                    });
 
                 } else if (!err) {
-                    hash.calculate(function (err, salt, hash) {
-                        new Account({username: username, password: hash, salt: salt})
+                    scrypt.calculate(password, function (err, hash) {
+
+                        new Account({username: username, password: hash})
                             .save(function (err) {
                                 callback({authenticated: (err == null), created: (err == null), username: username});
                             });
-                    }, password);
+                    });
                 }
             }
         ).exec();

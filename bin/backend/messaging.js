@@ -12,7 +12,7 @@ var messageSchema = new mongoose.Schema({
         room: String,
         timestamp: Number,
         command: Boolean
-    }, {strict: false}
+    }, {strict: true}
 );
 
 var Message = mongoose.model('message', messageSchema);
@@ -39,8 +39,9 @@ module.exports = {
     /**
      * Adds a new message to the room history.
      * @param message object {sender, content, command: boolean, room}
+     * @param callback called on completion.
      */
-    add: function (message) {
+    add: function (message, callback) {
         new Message(
             {
                 sender: message.sender,
@@ -52,6 +53,21 @@ module.exports = {
             .save(function (err) {
                 if (err)
                     throw err;
+
+                if (callback)
+                    callback();
             });
+    },
+
+    /**
+     * Removes all messages attached to a room.
+     * @param room name from where all messages should be removed.
+     * @param callback called on completion.
+     */
+    clear: function (room, callback) {
+        Message.remove({room: room}, function () {
+            if (callback)
+                callback();
+        });
     }
 };

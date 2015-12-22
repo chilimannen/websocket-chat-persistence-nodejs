@@ -10,7 +10,7 @@ var roomSchema = new mongoose.Schema({
         topic: String,
         owner: String,
         name: String
-    }, {strict: false}
+    }, {strict: true}
 );
 
 var Room = mongoose.model('room', roomSchema);
@@ -24,12 +24,12 @@ module.exports = {
      * @param topic the initial topic of the room.
      * @param callback object {topic, owner, room, created: true | null}
      */
-    create: function (name, owner, topic, callback) {
+    load: function (name, owner, topic, callback) {
         name = name.toString();
 
         Room.where({name: name}).findOne(function (err, result) {
             if (result) {
-                callback({topic: result.topic, owner: result.owner, room: name});
+                callback({topic: result.topic, owner: result.owner, room: name, created: false});
             } else {
                 if (err)
                     throw err;
@@ -57,6 +57,17 @@ module.exports = {
             if (err)
                 throw err;
         });
-    }
+    },
 
+    /**
+     * Removes a room.
+     * @param room name of the room to be removed.
+     * @param callback called on completion.
+     */
+    clear: function (room, callback) {
+        Room.remove({name: room}, function () {
+            if (callback)
+                callback();
+        });
+    }
 };

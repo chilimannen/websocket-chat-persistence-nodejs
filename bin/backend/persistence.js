@@ -13,6 +13,7 @@ var account = require('./account');
 var messaging = require('./messaging');
 var rooms = require('./rooms');
 var params = require('./../params');
+var hmac = require('./hmac.js');
 
 var WebSocketServer = require('ws').Server,
     wss = new WebSocketServer({port: params.persistence.listenPort});
@@ -45,6 +46,7 @@ handler["authenticate"] = function (socket, message) {
     account.authenticate(message.username, message.password,
         function (result) {
             result.header = message.header;
+            result.token = hmac.generate(result.username);
             socket.send(JSON.stringify(result));
         });
 };
@@ -82,6 +84,16 @@ handler["topic"] = function (socket, message) {
 
 
 /**
+ * Removes a room and its associated history
+ */
+handler["registry.room"] = function (socket, message) {
+    if (message.status == "DEPLETED") {
+        rooms.clear(message.room);
+        messaging.clear(message.room);
+    }
+};
+
+/**
  * Creates a room if it does not exist, or returns it if it already exists.
  * @param socket connection to the server initiating the query.
  * @param message contains the query. object {room, topic, username, created: true | null}
@@ -90,7 +102,7 @@ handler["topic"] = function (socket, message) {
 handler["room"] = function (socket, message) {
     message.topic = (message.topic != null) ? message.topic : '/topic <string>';
 
-    rooms.create(message.room, message.username, message.topic, function (result) {
+    rooms.load(message.room, message.username, message.topic, function (result) {
         result.header = message.header;
         socket.send(JSON.stringify(result));
     });

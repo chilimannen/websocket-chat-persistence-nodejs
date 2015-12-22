@@ -6,7 +6,7 @@
 
 var crypto = require('crypto');
 var algorithm = 'sha512';
-var iterations = 2500;
+var iterations = 500;
 var salt_bits = 128;
 
 module.exports = {
