@@ -11,7 +11,7 @@ var responses = 0;
 var host = 'socket://' + params.logging.host + ':' + params.logging.port + '/';
 var socket = new WebSocket(host);
 
-socket.on('close', function () {
+socket.on('error', function () {
     socket = new WebSocket(host);
 });
 

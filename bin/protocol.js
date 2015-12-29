@@ -19,9 +19,9 @@ module.exports = {
         this.authenticated = undefined;
     },
 
-    Logging: function (requests, responses) {
-        this.requests = requests;
-        this.responses = responses;
+    Logging: function (ins, out) {
+        this["in"] = ins;
+        this.out = out;
         this.type = 'logging.io';
         this.name = 'persistence';
     }

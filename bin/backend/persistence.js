@@ -30,7 +30,6 @@ wss.on('connection', function connection(socket) {
 
     socket.on('message', function incoming(message) {
         message = JSON.parse(message);
-        console.log(message);
         logging.request();
 
         if (handler[message.header.action] != null)
