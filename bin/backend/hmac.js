@@ -15,7 +15,7 @@ module.exports = {
      * @return  object {hmac, usename, date}
      */
     generate: function (username) {
-        var expiry = expirationSecond();
+        var expiry = expirationMS();
         return {key: calculate(username, expiry), username: username, expiry: expiry, success: true};
     },
 
@@ -39,7 +39,7 @@ module.exports = {
     }
 };
 
-function expirationSecond() {
+function expirationMS() {
     return new Date().getTime() * 1000 + duration;
 }
 

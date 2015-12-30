@@ -72,18 +72,6 @@ handler["message"] = function (socket, message) {
 };
 
 /**
- * Retrieves message history for a specified room.
- * @param socket socket connection to the server initiating the query.
- * @param message specifying the room to fetch from. object {room}
- */
-handler["history"] = function (socket, message) {
-    messaging.history(message.room, function (result) {
-        message.list = result;
-        socket.send(JSON.stringify(message));
-    });
-};
-
-/**
  * Changes the topic of a specified room.
  * @param socket socket connection to the server initiating the query.
  * @param message containing the room and new topic. object {room, topic}
@@ -114,6 +102,14 @@ handler["room"] = function (socket, message) {
 
     rooms.load(message.room, message.username, message.topic, function (result) {
         result.header = message.header;
-        socket.send(JSON.stringify(result));
+
+        if (result.created)
+            socket.send(JSON.stringify(result));
+        else {
+            messaging.history(message.room, function (history) {
+                result.history = history;
+                socket.send(JSON.stringify(result));
+            });
+        }
     });
 };

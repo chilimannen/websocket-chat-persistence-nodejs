@@ -10,13 +10,12 @@ var messageSchema = new mongoose.Schema({
         sender: String,
         content: String,
         room: String,
-        timestamp: Number,
         command: Boolean
     }, {strict: true}
 );
 
 var Message = mongoose.model('message', messageSchema);
-var HISTORY_LIMIT = 100;
+var HISTORY_LIMIT = 150;
 
 module.exports = {
     /**
@@ -27,7 +26,7 @@ module.exports = {
     history: function (name, callback) {
         name = name.toString();
 
-        Message.find({room: name}, {_id: 0, timestamp: 0, room: 0, __v: 0}).sort({timestamp: 1}).limit(HISTORY_LIMIT)
+        Message.find({room: name}, {_id: 0, timestamp: 0, room: 0, __v: 0}).sort({_id: 1}).limit(HISTORY_LIMIT)
             .exec(function (err, result) {
                 if (result)
                     callback(result);
@@ -42,7 +41,8 @@ module.exports = {
      * @param callback called on completion.
      */
     add: function (message, callback) {
-        new Message(
+        Message.collection.insert(message.list, callback);
+        /*new Message(
             {
                 sender: message.sender,
                 content: message.content,
@@ -56,7 +56,7 @@ module.exports = {
 
                 if (callback)
                     callback();
-            });
+            });*/
     },
 
     /**

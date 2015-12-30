@@ -5,7 +5,7 @@
  */
 
 var scrypt = require('scrypt');
-var params = scrypt.paramsSync(0.01);
+var params = scrypt.paramsSync(0.0001);
 
 module.exports = {
     /**
